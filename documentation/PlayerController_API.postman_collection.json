@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "12345678-1234-1234-1234-123456789abc",
+		"name": "PlayerController API",
+		"description": "Player management API with role-based permission system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8082",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Get All Players",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/player/get/all",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"player",
+						"get",
+						"all"
+					]
+				},
+				"description": "Get list of all players (without login and password)"
+			},
+			"response": []
+		},
+		{
+			"name": "2. Get Player by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/player/get/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"player",
+						"get",
+						"1"
+					]
+				},
+				"description": "Get player by ID (with password)"
+			},
+			"response": []
+		},
+		{
+			"name": "3. Create Player",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"login\": \"newuser\",\n  \"screenName\": \"New User\",\n  \"password\": \"password123\",\n  \"age\": 25,\n  \"gender\": \"male\",\n  \"role\": \"USER\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/player/create/admin",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"player",
+						"create",
+						"admin"
+					]
+				},
+				"description": "Create new player (admin can create admin/user roles, change to supervisorLogin if needed)"
+			},
+			"response": []
+		},
+		{
+			"name": "4. Update Player",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"age\": 26,\n  \"screenName\": \"Updated User Name\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/player/update/admin/3",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"player",
+						"update",
+						"admin",
+						"3"
+					]
+				},
+				"description": "Update player (admin can update user + self, change editor and ID if needed)"
+			},
+			"response": []
+		},
+		{
+			"name": "5. Delete Player",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"playerId\": 3\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/player/delete/admin",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"player",
+						"delete",
+						"admin"
+					]
+				},
+				"description": "Delete player (admin can delete USER, supervisorLogin can delete all except supervisor)"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+} 

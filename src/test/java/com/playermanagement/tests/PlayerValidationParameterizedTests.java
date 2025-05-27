@@ -1,0 +1,132 @@
+package com.playermanagement.tests;
+
+import com.playermanagement.api.ApiCalls;
+import com.playermanagement.api.ApiEndpoints;
+import com.playermanagement.api.UserRole;
+import com.playermanagement.config.TestConstants;
+import com.playermanagement.model.request.PlayerCreateRequest;
+import com.playermanagement.model.request.PlayerUpdateRequestDto;
+import com.playermanagement.model.response.PlayerCreateResponse;
+import com.playermanagement.utils.PlayerRequestBuilder;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.restassured.response.Response;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import java.util.stream.Stream;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@Slf4j
+@Epic("Player Management API")
+@Feature("Player Validation Tests")
+public class PlayerValidationParameterizedTests extends BaseTest {
+
+    @Test
+    @Tag("regression")
+    @EnumSource(value = UserRole.class, names = {"ADMIN", "SUPERVISOR"})
+    @DisplayName("TC-P-01: Different roles update USER")
+    void testRoleUpdatesUser(UserRole role) {
+        PlayerCreateResponse testUser = createTestUser();
+        log.info("Created test user with ID: {}", testUser.getId());
+
+        PlayerUpdateRequestDto updateRequest = new PlayerUpdateRequestDto();
+        updateRequest.setScreenName("Updated By " + role);
+
+        Response response = ApiCalls.patch(
+            ApiEndpoints.UPDATE_PLAYER,
+            updateRequest,
+            role,
+            testUser.getId()
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(TestConstants.HTTP_OK);
+        PlayerCreateResponse updatedUser = response.as(PlayerCreateResponse.class);
+        assertThat(updatedUser.getScreenName()).isEqualTo("Updated By " + role);
+        log.info("User successfully updated by role {}", role);
+    }
+
+    @Test
+    @Tag("regression")
+    @CsvSource({
+        "17, Age must be at least 18",
+        "101, Age must not exceed 100"
+    })
+    @DisplayName("TC-P-02: Age validation tests")
+    void testAgeValidation(int age, String expectedError) {
+        PlayerCreateRequest request = PlayerRequestBuilder.createUserRequestPojo();
+        request.setAge(age);
+        log.info("Testing age validation with age: {}", age);
+        
+        Response response = ApiCalls.post(
+            ApiEndpoints.CREATE_PLAYER,
+            request,
+            UserRole.SUPERVISOR
+        );
+        
+        assertThat(response.getStatusCode()).isEqualTo(TestConstants.HTTP_BAD_REQUEST);
+        assertThat(response.getBody().asString()).contains(expectedError);
+        log.info("Age validation error received as expected: {}", expectedError);
+    }
+
+    @Test
+    @Tag("regression")
+    @MethodSource("invalidPlayerData")
+    @DisplayName("TC-P-03: Invalid player data validation")
+    void testInvalidPlayerData(String login, String password, String gender, String expectedError) {
+        PlayerCreateRequest request = PlayerRequestBuilder.createUserRequestPojo();
+        request.setLogin(login);
+        request.setPassword(password);
+        request.setGender(gender);
+        log.info("Testing invalid player data: login={}, password={}, gender={}", login, password, gender);
+        
+        Response response = ApiCalls.post(
+            ApiEndpoints.CREATE_PLAYER,
+            request,
+            UserRole.SUPERVISOR
+        );
+        
+        assertThat(response.getStatusCode()).isEqualTo(TestConstants.HTTP_BAD_REQUEST);
+        assertThat(response.getBody().asString()).contains(expectedError);
+        log.info("Validation error received as expected: {}", expectedError);
+    }
+
+    static Stream<org.junit.jupiter.params.provider.Arguments> invalidPlayerData() {
+        return Stream.of(
+            org.junit.jupiter.params.provider.Arguments.of("", "ValidPass123", "male", "Login cannot be empty"),
+            org.junit.jupiter.params.provider.Arguments.of("user1", "short", "male", "Password must be at least 8 characters"),
+            org.junit.jupiter.params.provider.Arguments.of("user1", "ValidPass123", "invalid", "Invalid gender value")
+        );
+    }
+
+    @Test
+    @Tag("regression")
+    @ValueSource(longs = {-1L, 0L, 99999L})
+    @DisplayName("TC-P-04: Get player by invalid ID")
+    void testGetPlayerByInvalidId(long invalidId) {
+        log.info("Testing get player with invalid ID: {}", invalidId);
+        
+        Response response = ApiCalls.get(
+            ApiEndpoints.GET_PLAYER_BY_ID,
+            invalidId
+        );
+        
+        assertThat(response.getStatusCode()).isEqualTo(TestConstants.HTTP_NOT_FOUND);
+        log.info("Not found status received as expected for ID: {}", invalidId);
+    }
+
+    private PlayerCreateResponse createTestUser() {
+        PlayerCreateRequest request = PlayerRequestBuilder.createUserRequestPojo();
+        Response response = ApiCalls.post(
+            ApiEndpoints.CREATE_PLAYER,
+            request,
+            UserRole.SUPERVISOR
+        );
+        return response.as(PlayerCreateResponse.class);
+    }
+} 

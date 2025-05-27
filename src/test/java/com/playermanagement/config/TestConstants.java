@@ -1,0 +1,40 @@
+package com.playermanagement.config;
+
+/**
+ * Global test constants
+ */
+public final class TestConstants {
+    
+    // Private constructor to prevent instantiation
+    private TestConstants() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+    
+    // ========== API Configuration ==========
+    public static final String DEFAULT_BASE_URL = "http://localhost:8082";
+    public static final String CONTENT_TYPE_JSON = "application/json";
+    
+    // ========== HTTP Status Codes ==========
+    public static final int HTTP_OK = 200;
+    public static final int HTTP_CREATED = 201;
+    public static final int HTTP_NO_CONTENT = 204;
+    public static final int HTTP_BAD_REQUEST = 400;
+    public static final int HTTP_UNAUTHORIZED = 401;
+    public static final int HTTP_FORBIDDEN = 403;
+    public static final int HTTP_NOT_FOUND = 404;
+    public static final int HTTP_CONFLICT = 409;
+    public static final int HTTP_INTERNAL_SERVER_ERROR = 500;
+    
+    // ========== Database ==========
+    public static final String TEST_DB_URL = "jdbc:h2:mem:testdb";
+    public static final String TEST_DB_USERNAME = "sa";
+    public static final String TEST_DB_PASSWORD = "";
+    
+    // PostgreSQL Database
+    public static final String POSTGRESQL_DB_URL = "jdbc:postgresql://localhost:5432/stribe_db";
+    public static final String POSTGRESQL_DB_USERNAME = "stribe_user";
+    public static final String POSTGRESQL_DB_PASSWORD = "stribe_pass";
+    
+    // ========== Environment Variables ==========
+    public static final String ENV_API_BASE_URL = "api.base.url";
+} 
