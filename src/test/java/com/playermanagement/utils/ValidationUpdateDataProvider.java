@@ -1,7 +1,7 @@
 package com.playermanagement.utils;
 
 import com.github.javafaker.Faker;
-import com.playermanagement.model.request.PlayerUpdateRequestDto;
+import com.playermanagement.dto.request.PlayerUpdateRequestDto;
 
 public class ValidationUpdateDataProvider {
     private static final Faker faker = new Faker();

@@ -108,7 +108,7 @@
 						"3"
 					]
 				},
-				"description": "Update player (admin can update user + self, change editor and ID if needed)"
+				"description": "Update player (admin can update user + self, change ID if needed)"
 			},
 			"response": []
 		},

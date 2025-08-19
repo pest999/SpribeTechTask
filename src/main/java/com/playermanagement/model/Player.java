@@ -50,17 +50,13 @@ public class Player {
     @Column(name = "gender", nullable = false, length = 10)
     private Gender gender;
 
-    @NotNull(message = "Role cannot be null")
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 20)
-    private Role role;
 
-    public Player(String login, String screenName, String password, int age, Gender gender, Role role) {
+
+    public Player(String login, String screenName, String password, int age, Gender gender) {
         this.login = login;
         this.screenName = screenName;
         this.password = password;
         this.age = age;
         this.gender = gender;
-        this.role = role;
     }
 } 

@@ -4,8 +4,8 @@ import com.playermanagement.api.ApiCalls;
 import com.playermanagement.api.ApiEndpoints;
 import com.playermanagement.api.UserRole;
 import com.playermanagement.config.TestConstants;
-import com.playermanagement.model.request.PlayerCreateRequest;
-import com.playermanagement.model.response.PlayerCreateResponse;
+import com.playermanagement.dto.request.PlayerCreateDto;
+import com.playermanagement.dto.response.PlayerCreateResponseDto;
 import com.playermanagement.utils.PlayerRequestBuilder;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -26,7 +26,7 @@ public class PlayerDeleteTests extends BaseTest {
     @Tag("regression")
     @DisplayName("TC-R-08: Supervisor deletes ADMIN")
     void testSupervisorDeletesAdmin() {
-        PlayerCreateResponse createdAdmin = createTestAdmin();
+        PlayerCreateResponseDto createdAdmin = createTestAdmin();
         log.info("Created test admin with ID: {}", createdAdmin.getId());
 
         Response deleteResponse = deletePlayer(createdAdmin.getId(), UserRole.SUPERVISOR);
@@ -38,7 +38,7 @@ public class PlayerDeleteTests extends BaseTest {
     @Tag("regression")
     @DisplayName("TC-R-09: Admin deletes USER")
     void testAdminDeletesUser() {
-        PlayerCreateResponse createdUser = createTestUser();
+        PlayerCreateResponseDto createdUser = createTestUser();
         log.info("Created test user with ID: {}", createdUser.getId());
 
         Response deleteResponse = deletePlayer(createdUser.getId(), UserRole.ADMIN);
@@ -50,7 +50,7 @@ public class PlayerDeleteTests extends BaseTest {
     @Tag("regression")
     @DisplayName("TC-R-10: Admin tries to delete ADMIN")
     void testAdminDeletesAdmin() {
-        PlayerCreateResponse createdAdmin = createTestAdmin();
+        PlayerCreateResponseDto createdAdmin = createTestAdmin();
         log.info("Created test admin with ID: {}", createdAdmin.getId());
 
         Response deleteResponse = deletePlayer(createdAdmin.getId(), UserRole.ADMIN);
@@ -63,7 +63,7 @@ public class PlayerDeleteTests extends BaseTest {
     @Tag("regression")
     @DisplayName("TC-R-13: User tries to delete any user")
     void testUserDeletesAnyUser() {
-        PlayerCreateResponse createdUser = createTestUser();
+        PlayerCreateResponseDto createdUser = createTestUser();
         log.info("Created test user with ID: {}", createdUser.getId());
 
         Response deleteResponse = deletePlayer(createdUser.getId(), UserRole.USER);
@@ -73,25 +73,25 @@ public class PlayerDeleteTests extends BaseTest {
     }
 
     @Step("Create test user")
-    private PlayerCreateResponse createTestUser() {
-        PlayerCreateRequest request = PlayerRequestBuilder.createUserRequestPojo();
+    private PlayerCreateResponseDto createTestUser() {
+        PlayerCreateDto request = PlayerRequestBuilder.createUserRequestPojo();
         Response response = ApiCalls.post(
             ApiEndpoints.CREATE_PLAYER,
             request,
             UserRole.SUPERVISOR
         );
-        return response.as(PlayerCreateResponse.class);
+        return response.as(PlayerCreateResponseDto.class);
     }
 
     @Step("Create test admin")
-    private PlayerCreateResponse createTestAdmin() {
-        PlayerCreateRequest request = PlayerRequestBuilder.createAdminRequestPojo();
+    private PlayerCreateResponseDto createTestAdmin() {
+        PlayerCreateDto request = PlayerRequestBuilder.createAdminRequestPojo();
         Response response = ApiCalls.post(
             ApiEndpoints.CREATE_PLAYER,
             request,
             UserRole.SUPERVISOR
         );
-        return response.as(PlayerCreateResponse.class);
+        return response.as(PlayerCreateResponseDto.class);
     }
 
     @Step("Delete player")

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 public class PlayerGetByPlayerIdResponseDto extends PlayerResponseDto {
     private String password;
     
-    public PlayerGetByPlayerIdResponseDto(Integer age, String gender, Long id, String login, String role, String screenName, String password) {
-        super(age, gender, id, login, role, screenName);
+    public PlayerGetByPlayerIdResponseDto(Integer age, String gender, Long id, String login, String screenName, String password) {
+        super(age, gender, id, login, screenName);
         this.password = password;
     }
 } 

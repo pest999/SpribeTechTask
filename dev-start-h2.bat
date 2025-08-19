@@ -20,4 +20,4 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 echo.
 echo Application stopped.
-pause 
+pause

@@ -26,14 +26,9 @@ public final class TestConstants {
     public static final int HTTP_INTERNAL_SERVER_ERROR = 500;
     
     // ========== Database ==========
-    public static final String TEST_DB_URL = "jdbc:h2:mem:testdb";
-    public static final String TEST_DB_USERNAME = "sa";
-    public static final String TEST_DB_PASSWORD = "";
-    
-    // PostgreSQL Database
-    public static final String POSTGRESQL_DB_URL = "jdbc:postgresql://localhost:5432/stribe_db";
-    public static final String POSTGRESQL_DB_USERNAME = "stribe_user";
-    public static final String POSTGRESQL_DB_PASSWORD = "stribe_pass";
+    public static final String DB_URL = "jdbc:h2:mem:flamingo_db";
+    public static final String DB_USERNAME = "sa";
+    public static final String DB_PASSWORD = "";
     
     // ========== Environment Variables ==========
     public static final String ENV_API_BASE_URL = "api.base.url";

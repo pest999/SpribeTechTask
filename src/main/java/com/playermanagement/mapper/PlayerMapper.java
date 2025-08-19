@@ -20,7 +20,7 @@ public class PlayerMapper {
                 player.getGender().name().toLowerCase(),
                 player.getId(),
                 player.getLogin(),
-                player.getRole().name().toLowerCase(),
+
                 player.getScreenName(),
                 player.getPassword()
         );
@@ -36,7 +36,6 @@ public class PlayerMapper {
                 player.getGender().name().toLowerCase(),
                 player.getId(),
                 player.getLogin(),
-                player.getRole().name().toLowerCase(),
                 player.getScreenName(),
                 player.getPassword()
         );
@@ -52,7 +51,6 @@ public class PlayerMapper {
                 player.getGender().name().toLowerCase(),
                 player.getId(),
                 player.getLogin(),
-                player.getRole().name().toLowerCase(),
                 player.getScreenName()
         );
     }
@@ -66,7 +64,6 @@ public class PlayerMapper {
                 player.getAge(),
                 player.getGender().name().toLowerCase(),
                 player.getId(),
-                player.getRole().name().toLowerCase(),
                 player.getScreenName()
         );
     }
@@ -81,8 +78,7 @@ public class PlayerMapper {
                 playerCreateDto.getScreenName(),
                 playerCreateDto.getPassword(),
                 playerCreateDto.getAge(),
-                Gender.valueOf(playerCreateDto.getGender().toUpperCase()),
-                Role.valueOf(playerCreateDto.getRole().toUpperCase())
+                Gender.valueOf(playerCreateDto.getGender().toUpperCase())
         );
     }
 } 

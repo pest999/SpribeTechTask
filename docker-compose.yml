@@ -2,41 +2,37 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15
-    container_name: stribe-db
+    image: postgres:latest
+    container_name: flamingo-db
     environment:
-      POSTGRES_DB: stribe_db
-      POSTGRES_USER: stribe_user
-      POSTGRES_PASSWORD: stribe_pass
+      POSTGRES_DB: flamingo_db
+      POSTGRES_USER: flamingo_user
+      POSTGRES_PASSWORD: flamingo_pass
+      TZ: Europe/Kyiv
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U stribe_user -d stribe_db"]
+      test: ["CMD-SHELL", "pg_isready -U flamingo_user -d flamingo_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   app:
     build: .
-    container_name: stribe-app
+    container_name: flamingo-app
     ports:
       - "8082:8082"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/stribe_db
-      SPRING_DATASOURCE_USERNAME: stribe_user
-      SPRING_DATASOURCE_PASSWORD: stribe_pass
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/flamingo_db
+      SPRING_DATASOURCE_USERNAME: flamingo_user
+      SPRING_DATASOURCE_PASSWORD: flamingo_pass
       SERVER_PORT: 8082
     depends_on:
       postgres:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
 volumes:
-  postgres_data: 
+  postgres_data:

@@ -14,7 +14,7 @@ public class DatabaseConnection {
     
 
     public static void executeQuery(String sql) {
-        try (Connection connection = DriverManager.getConnection(POSTGRESQL_DB_URL, POSTGRESQL_DB_USERNAME, POSTGRESQL_DB_PASSWORD);
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
              Statement statement = connection.createStatement()) {
             
             log.info("Executing SQL: {}", sql);

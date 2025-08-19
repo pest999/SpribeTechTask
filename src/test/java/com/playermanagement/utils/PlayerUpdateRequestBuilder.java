@@ -1,7 +1,7 @@
 package com.playermanagement.utils;
 
 import com.github.javafaker.Faker;
-import com.playermanagement.model.request.PlayerUpdateRequestDto;
+import com.playermanagement.dto.request.PlayerUpdateRequestDto;
 
 public class PlayerUpdateRequestBuilder {
     
@@ -14,7 +14,7 @@ public class PlayerUpdateRequestBuilder {
         return PlayerUpdateRequestDto.builder()
             .screenName(faker.name().firstName())
             .age(faker.number().numberBetween(16, 60))
-            .gender("male")
+            .gender("MALE")
             .role("USER")
             .password(generateValidPassword())
             .build();
@@ -31,7 +31,7 @@ public class PlayerUpdateRequestBuilder {
         return PlayerUpdateRequestDto.builder()
             .screenName(faker.name().firstName())
             .age(faker.number().numberBetween(16, 60))
-            .gender("male")
+            .gender("MALE")
             .role(role)
             .build();
     }

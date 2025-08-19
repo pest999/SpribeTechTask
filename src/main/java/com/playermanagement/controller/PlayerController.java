@@ -26,71 +26,48 @@ public class PlayerController {
         logger.info("PlayerController initialized");
     }
 
-    @PostMapping("/create/{editor}")
+    @PostMapping("/create")
     public ResponseEntity<PlayerCreateResponseDto> createPlayer(
-            @PathVariable String editor,
             @Valid @RequestBody PlayerCreateDto playerCreateDto) {
         
-        PlayerCreateResponseDto createdPlayer = playerService.createPlayer(playerCreateDto, editor);
+        PlayerCreateResponseDto createdPlayer = playerService.createPlayer(playerCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPlayer);
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<PlayerGetByPlayerIdResponseDto> getPlayer(@RequestParam Long playerId) {
+    @GetMapping("/get/{playerId}")
+    public ResponseEntity<PlayerGetByPlayerIdResponseDto> getPlayer(@PathVariable Long playerId) {
         PlayerGetByPlayerIdResponseDto player = playerService.getPlayerById(playerId);
         return ResponseEntity.ok(player);
     }
 
-    @PatchMapping("/update/{editor}/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<PlayerUpdateResponseDto> updatePlayer(
-            @PathVariable String editor,
             @PathVariable Long id,
             @Valid @RequestBody PlayerUpdateRequestDto playerUpdateDto) {
         
-        logger.info("START updatePlayer - Editor: {}, Player ID: {}, Update fields: {}", 
-                    editor, id, getUpdateFields(playerUpdateDto));
-        
         try {
-            PlayerUpdateResponseDto updatedPlayer = playerService.updatePlayer(id, playerUpdateDto, editor);
-            logger.info("SUCCESS updatePlayer - Updated player: {}, New data: {}", 
-                       updatedPlayer.getLogin(), getPlayerInfo(updatedPlayer));
+            PlayerUpdateResponseDto updatedPlayer = playerService.updatePlayer(id, playerUpdateDto);
+            logger.info("SUCCESS updatePlayer - Updated player: {}",
+                       updatedPlayer.getLogin());
             return ResponseEntity.ok(updatedPlayer);
         } catch (Exception e) {
-            logger.error("ERROR updatePlayer - Editor: {}, Player ID: {}, Error: {}", 
-                        editor, id, e.getMessage());
+            logger.error("ERROR updatePlayer - Player ID: {}, Error: {}", 
+                        id, e.getMessage());
             throw e;
         }
     }
 
-    @DeleteMapping("/delete/{editor}")
+    @DeleteMapping("/delete")
     public ResponseEntity<Boolean> deletePlayer(
-            @PathVariable String editor,
-            @RequestParam Long playerId) {
+            @Valid @RequestBody PlayerDeleteRequestDto deleteRequest) {
         
-        boolean deleted = playerService.deletePlayer(playerId, editor);
+        boolean deleted = playerService.deletePlayer(deleteRequest.getPlayerId());
         return ResponseEntity.ok(deleted);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/get/all")
     public ResponseEntity<PlayerGetAllResponseDto> getAllPlayers() {
         PlayerGetAllResponseDto players = playerService.getAllPlayers();
         return ResponseEntity.ok(players);
-    }
-
-    // Helper methods for logging
-    private String getUpdateFields(PlayerUpdateRequestDto dto) {
-        StringBuilder fields = new StringBuilder();
-        if (dto.getScreenName() != null) fields.append("screenName,");
-        if (dto.getAge() != null) fields.append("age,");
-        if (dto.getGender() != null) fields.append("gender,");
-        if (dto.getRole() != null) fields.append("role,");
-        if (dto.getPassword() != null) fields.append("password,");
-        return fields.length() > 0 ? fields.substring(0, fields.length() - 1) : "none";
-    }
-
-    private String getPlayerInfo(PlayerResponseDto player) {
-        return "Login: " + player.getLogin() + ", Screen Name: " + player.getScreenName() +
-               ", Age: " + player.getAge() + ", Gender: " + player.getGender() +
-               ", Role: " + player.getRole();
     }
 } 

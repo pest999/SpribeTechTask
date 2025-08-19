@@ -1,58 +1,56 @@
 # PlayerController API
 
-Spring Boot REST API for user management with role-based permission system.
-
-**🔗 Reference API:** [Swagger UI](http://3.68.165.45/swagger-ui.html#/player-controller)
-
+Spring Boot REST API for user management.
 ---
 
 ## 🎯 Features
 
 - ✅ **CRUD operations** for users
-- ✅ **Role-based permissions** (supervisor/admin/user)
 - ✅ **Data validation** with detailed error messages
-- ✅ **Dual database support** (H2 for development, PostgreSQL for testing)
 - ✅ **REST API** with proper HTTP status codes
 - ✅ **Docker support** for PostgreSQL
 - ✅ **Comprehensive logging** with file rotation
-
 ---
 
 ## 🚀 Quick Start
 
 ### Requirements
-- Java 11+
+- Java 17+
 - Maven 3.6+
-- Docker (optional for PostgreSQL)
 
 ### Running the Application
 
-#### H2 Database (Development)
+#### H2 Database (Recommended - Simple Setup)
 ```bash
-# Using batch script (10-minute auto-shutdown)
+# Start application with H2 in-memory database
 ./dev-start-h2.bat
 
 # Or manually
-mvn spring-boot:run -Dspring.profiles.active=dev
+mvn spring-boot:run
 ```
 
-#### PostgreSQL Database (Development)
+#### PostgreSQL Database (Docker - NOT IMPLEMENTED)
 ```bash
-# Using batch script (10-minute auto-shutdown)  
-./dev-start-postgres.bat
+# ⚠️ WARNING: Docker setup has timezone issues in non-English Windows environments
+# PostgreSQL timezone "Europe/Kiev" causes fatal errors
+# Use H2 database instead for stable operation
 
-# Or manually
-docker-compose up -d
-mvn spring-boot:run -Dspring.profiles.active=test
+# NOT RECOMMENDED - may fail:
+./dev-start-postgres.bat
+./run-tests.bat
 ```
 
 #### API Testing (Automation)
 ```bash
-# Full test automation: build → start → test → report
+# H2 Database Tests (Recommended)
+./run-tests-h2.bat
+
+# PostgreSQL Tests (May fail due to timezone issues)
 ./run-tests.bat
 ```
 
 **API available at:** http://localhost:8082
+**H2 Console:** http://localhost:8082/h2-console
 
 ---
 
@@ -60,33 +58,11 @@ mvn spring-boot:run -Dspring.profiles.active=test
 
 | Method | Endpoint | Description | Permissions |
 |--------|----------|-------------|-------------|
-| `POST` | `/player/create/{editor}` | Create user | supervisor, admin |
+| `POST` | `/player/create` | Create user |
 | `GET` | `/player/get/{playerId}` | Get user by ID | all |
-| `PATCH` | `/player/update/{editor}/{id}` | Update user (partial) | role-dependent |
-| `DELETE` | `/player/delete/{editor}` | Delete user | supervisor, admin |
+| `PATCH` | `/player/update/{id}` | Update user (partial) |
+| `DELETE` | `/player/delete` | Delete user |
 | `GET` | `/player/get/all` | Get all users | all |
-
----
-
-## 👥 Role System
-
-### Supervisor
-- ✅ Can create admin/user
-- ✅ Can edit anyone
-- ✅ Can delete all (except other supervisors)
-- ❌ Cannot be deleted
-
-### Admin  
-- ✅ Can create admin/user
-- ✅ Can edit users + self
-- ✅ Can delete users only
-- ✅ Can be deleted by supervisor
-
-### User
-- ❌ Cannot create users
-- ✅ Can edit only self
-- ❌ Cannot delete anyone
-- ✅ Can be deleted by admin/supervisor
 
 ---
 
@@ -98,7 +74,7 @@ mvn spring-boot:run -Dspring.profiles.active=test
   "login": "string",
   "screenName": "string", 
   "password": "string",
-  "age": 25,
+  "age": "int",
   "gender": "male",
   "role": "user"
 }
@@ -152,12 +128,6 @@ mvn spring-boot:run -Dspring.profiles.active=test
 
 ## 🗄️ Database Configuration
 
-### H2 (Development)
-- In-memory database
-- Web console: http://localhost:8082/h2-console
-- JDBC URL: `jdbc:h2:mem:testdb`
-- Username: `sa`, Password: (empty)
-
 ### PostgreSQL (Testing)
 ```yaml
 # docker-compose.yml
@@ -166,23 +136,18 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: stribe_db
-      POSTGRES_USER: stribe_user
-      POSTGRES_PASSWORD: stribe_pass
+      POSTGRES_DB: flamingo_db
+      POSTGRES_USER: flamingo_user
+      POSTGRES_PASSWORD: flamingo_pass
     ports:
       - "5432:5432"
 ```
 
 ### Initial Data
 ```sql
--- Supervisor
-id=1, login='supervisorLogin', role='SUPERVISOR'
 
 -- Admin  
-id=2, login='admin', role='ADMIN'
-
--- User
-id=3, login='user', role='USER'
+id=1, login='admin', role='ADMIN'
 ```
 
 ---
@@ -203,10 +168,6 @@ id=3, login='user', role='USER'
 
 ### Database Type Detection
 ```log
-# H2 Database
-Database Type: H2 In-Memory Database
-Database Mode: In-Memory (Development)
-
 # PostgreSQL Database  
 Database Type: PostgreSQL Database
 Database Mode: Persistent (Test/Production)
@@ -256,7 +217,7 @@ After running tests, Allure automatically opens interactive reports with:
 
 **Create User:**
 ```bash
-curl -X POST http://localhost:8082/player/create/admin \
+curl -X POST http://localhost:8082/player/create \
   -H "Content-Type: application/json" \
   -d '{
     "login": "newuser",
@@ -275,45 +236,30 @@ curl http://localhost:8082/player/get/1
 
 **Update User:**
 ```bash
-curl -X PATCH http://localhost:8082/player/update/admin/1 \
+curl -X PATCH http://localhost:8082/player/update/1 \
   -H "Content-Type: application/json" \
   -d '{"age": 26}'
 ```
 
 **Delete User:**
 ```bash
-curl -X DELETE http://localhost:8082/player/delete/admin \
+curl -X DELETE http://localhost:8082/player/delete \
   -H "Content-Type: application/json" \
   -d '{"playerId": 1}'
 ```
 
 ---
 
-## 🏗️ Project Structure
-
-```
-src/main/java/com/playermanagement/
-├── controller/     # REST Controllers
-├── service/        # Business Logic  
-├── repository/     # Data Access Layer
-├── model/          # Entity Classes
-├── dto/            # Data Transfer Objects
-├── mapper/         # DTO-Entity Mapping
-├── exception/      # Custom Exceptions
-└── validation/     # Validation Utilities
-```
 
 ### Technologies
 - **Spring Boot 2.7.0** - Main framework
 - **Spring Data JPA** - Database operations
-- **H2 Database** - Development
-- **PostgreSQL** - Testing
+- **PostgreSQL** - Database
 - **JUnit 5** - Testing framework
 - **RestAssured** - API testing
 - **Allure** - Test reporting
 - **Lombok** - Reduce boilerplate code
 - **Docker** - Containerization
-- **Logback** - Logging with file rotation
 
 ---
 
@@ -328,31 +274,3 @@ src/main/java/com/playermanagement/
 | `404` | Not Found | User not found |
 
 ---
-
-## 🔐 Security Notes
-
-### Current Level
-- ✅ Input data validation
-- ✅ Role-based permissions
-- ✅ Unique field constraints
-
-### Limitations
-- ⚠️ Passwords stored in plain text
-- ⚠️ No authentication mechanism
-- ⚠️ Passwords returned in some responses
-
-### Production Requirements
-1. Password encryption (BCrypt)
-2. JWT authentication
-3. HTTPS
-4. Rate limiting
-
----
-
-## 📝 License
-
-This project was created for AQA Java Engineer technical assignment.
-
----
-
-**Reference API:** http://3.68.165.45/swagger-ui.html#/player-controller 

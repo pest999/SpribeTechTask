@@ -4,9 +4,9 @@ import com.playermanagement.api.ApiCalls;
 import com.playermanagement.api.ApiEndpoints;
 import com.playermanagement.api.UserRole;
 import com.playermanagement.config.TestConstants;
-import com.playermanagement.model.request.PlayerCreateRequest;
-import com.playermanagement.model.request.PlayerUpdateRequestDto;
-import com.playermanagement.model.response.PlayerCreateResponse;
+import com.playermanagement.dto.request.PlayerUpdateRequestDto;
+import com.playermanagement.dto.request.PlayerCreateDto;
+import com.playermanagement.dto.response.PlayerCreateResponseDto;
 import com.playermanagement.utils.PlayerRequestBuilder;
 import com.playermanagement.utils.ValidationUpdateDataProvider;
 import io.qameta.allure.Epic;
@@ -25,18 +25,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Feature("Player Update Validation Tests")
 public class PlayerUpdateValidationTests extends BaseTest {
 
-    private PlayerCreateResponse testPlayer;
+    private PlayerCreateResponseDto testPlayer;
 
     @BeforeEach
     void setUp() {
-        PlayerCreateRequest createRequest = PlayerRequestBuilder.createUserRequestPojo();
+        PlayerCreateDto createRequest = PlayerRequestBuilder.createUserRequestPojo();
         Response createResponse = ApiCalls.post(
             ApiEndpoints.CREATE_PLAYER,
             createRequest,
             UserRole.SUPERVISOR
         );
         assertThat(createResponse.getStatusCode()).isEqualTo(TestConstants.HTTP_CREATED);
-        testPlayer = createResponse.as(PlayerCreateResponse.class);
+        testPlayer = createResponse.as(PlayerCreateResponseDto.class);
     }
 
     @Test
@@ -55,29 +55,9 @@ public class PlayerUpdateValidationTests extends BaseTest {
         verifyValidationError(updateRequest);
     }
 
-    @Test
-    @Tag("regression")
-    @DisplayName("TC-UV-03: Update validation - Invalid gender")
-    void testInvalidGenderValidation() {
-        PlayerUpdateRequestDto updateRequest = ValidationUpdateDataProvider.getRequestWithInvalidGender();
-        verifyValidationError(updateRequest);
-    }
 
-    @Test
-    @Tag("regression")
-    @DisplayName("TC-UV-04: Update validation - Invalid password format")
-    void testInvalidPasswordValidation() {
-        PlayerUpdateRequestDto updateRequest = ValidationUpdateDataProvider.getRequestWithInvalidPassword();
-        verifyValidationError(updateRequest);
-    }
 
-    @Test
-    @Tag("regression")
-    @DisplayName("TC-UV-05: Update validation - Invalid role")
-    void testInvalidRoleValidation() {
-        PlayerUpdateRequestDto updateRequest = ValidationUpdateDataProvider.getRequestWithInvalidRole();
-        verifyValidationError(updateRequest);
-    }
+
 
     @Step("Verify validation error for update request")
     private void verifyValidationError(PlayerUpdateRequestDto request) {

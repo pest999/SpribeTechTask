@@ -12,6 +12,5 @@ public class PlayerResponseDto {
     private String gender;
     private Long id;
     private String login;
-    private String role;
     private String screenName;
 } 

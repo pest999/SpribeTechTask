@@ -2,8 +2,18 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+# Copy Maven wrapper and pom.xml
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
 
-EXPOSE 8082
+# Download dependencies
+RUN ./mvnw dependency:go-offline
 
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+# Copy source code
+COPY src/ src/
+
+# Build the application
+RUN ./mvnw clean package -DskipTests
+
+# Run the application
+CMD ["java", "-jar", "target/FlamingoApiTAF-1.0-SNAPSHOT.jar"]

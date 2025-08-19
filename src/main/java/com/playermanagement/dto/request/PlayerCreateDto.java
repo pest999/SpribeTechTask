@@ -2,12 +2,14 @@ package com.playermanagement.dto.request;
 
 import com.playermanagement.util.ValidationConstants;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlayerCreateDto {
@@ -30,7 +32,4 @@ public class PlayerCreateDto {
 
     @NotNull(message = ValidationConstants.GENDER_REQUIRED)
     private String gender;
-
-    @NotNull(message = ValidationConstants.ROLE_REQUIRED)
-    private String role;
 } 

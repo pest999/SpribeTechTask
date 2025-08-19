@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>StribeApiTAF</artifactId>
+    <artifactId>FlamingoApiTAF</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
@@ -62,16 +62,20 @@
             <scope>test</scope>
         </dependency>
 
+
+        
+        <!-- H2 Database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
         
-        <!-- PostgreSQL -->
+        <!-- PostgreSQL (optional for production) -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>42.5.4</version>
             <scope>runtime</scope>
         </dependency>
 

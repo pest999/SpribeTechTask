@@ -2,10 +2,10 @@ package com.playermanagement.api;
 
 public enum ApiEndpoints {
     GET_ALL_PLAYERS("/player/get/all"),
-    CREATE_PLAYER("/player/create/{editor}"),
-    GET_PLAYER_BY_ID("/player/get/{id}"),
-    UPDATE_PLAYER("/player/update/{editor}/{id}"),
-    DELETE_PLAYER("/player/delete/{editor}");
+    CREATE_PLAYER("/player/create"),
+    GET_PLAYER_BY_ID("/player/get/{playerId}"),
+    UPDATE_PLAYER("/player/update/{id}"),
+    DELETE_PLAYER("/player/delete");
 
     private final String path;
     

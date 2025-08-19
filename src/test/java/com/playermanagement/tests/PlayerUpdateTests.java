@@ -3,10 +3,10 @@ package com.playermanagement.tests;
 import com.playermanagement.api.ApiCalls;
 import com.playermanagement.api.ApiEndpoints;
 import com.playermanagement.config.TestConstants;
-import com.playermanagement.model.request.PlayerCreateRequest;
-import com.playermanagement.model.request.PlayerUpdateRequestDto;
-import com.playermanagement.model.response.PlayerCreateResponse;
-import com.playermanagement.model.response.PlayerUpdateResponseDto;
+import com.playermanagement.dto.request.PlayerCreateDto;
+import com.playermanagement.dto.request.PlayerUpdateRequestDto;
+import com.playermanagement.dto.response.PlayerCreateResponseDto;
+import com.playermanagement.dto.response.PlayerUpdateResponseDto;
 import com.playermanagement.utils.PlayerRequestBuilder;
 import com.playermanagement.utils.PlayerUpdateRequestBuilder;
 import com.playermanagement.util.ValidationConstants;
@@ -32,14 +32,14 @@ public class PlayerUpdateTests extends BaseTest {
     @DisplayName("TC-U-01: Update player - successful (200 OK)")
     void testSuccessfulUpdate() {
         // Create a player first
-        PlayerCreateRequest createRequest = PlayerRequestBuilder.createUserRequestPojo();
+        PlayerCreateDto createRequest = PlayerRequestBuilder.createUserRequestPojo();
         Response createResponse = ApiCalls.post(
             ApiEndpoints.CREATE_PLAYER,
             createRequest,
             SUPERVISOR_LOGIN
         );
         assertThat(createResponse.getStatusCode()).isEqualTo(TestConstants.HTTP_CREATED);
-        PlayerCreateResponse createdPlayer = createResponse.as(PlayerCreateResponse.class);
+        PlayerCreateResponseDto createdPlayer = createResponse.as(PlayerCreateResponseDto.class);
 
         // Update the player with random valid data
         PlayerUpdateRequestDto updateRequest = PlayerUpdateRequestBuilder.createValidUpdateRequest();
@@ -60,7 +60,7 @@ public class PlayerUpdateTests extends BaseTest {
                 assertThat(player.getScreenName()).isEqualTo(updateRequest.getScreenName());
                 assertThat(player.getAge()).isEqualTo(updateRequest.getAge());
                 assertThat(player.getGender()).isEqualTo(updateRequest.getGender());
-                assertThat(player.getRole()).isEqualTo(updateRequest.getRole().toLowerCase());
+                // Role field removed - no role validation needed
             });
         
         log.info("Successfully updated player with ID: {}", updatedPlayer.getId());
@@ -71,21 +71,21 @@ public class PlayerUpdateTests extends BaseTest {
     @DisplayName("TC-U-02: Update player - no changes (204 No Content)")
     void testUpdateWithNoChanges() {
         // Create a player first
-        PlayerCreateRequest createRequest = PlayerRequestBuilder.createUserRequestPojo();
+        PlayerCreateDto createRequest = PlayerRequestBuilder.createUserRequestPojo();
         Response createResponse = ApiCalls.post(
             ApiEndpoints.CREATE_PLAYER,
             createRequest,
             SUPERVISOR_LOGIN
         );
         assertThat(createResponse.getStatusCode()).isEqualTo(TestConstants.HTTP_CREATED);
-        PlayerCreateResponse createdPlayer = createResponse.as(PlayerCreateResponse.class);
+        PlayerCreateResponseDto createdPlayer = createResponse.as(PlayerCreateResponseDto.class);
 
         // Update with same data
         PlayerUpdateRequestDto updateRequest = PlayerUpdateRequestDto.builder()
             .screenName(createdPlayer.getScreenName())
             .age(createdPlayer.getAge())
             .gender(createdPlayer.getGender())
-            .role(createdPlayer.getRole())
+            // .role() removed - no role field available
             .build();
 
         Response updateResponse = ApiCalls.patch(

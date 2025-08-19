@@ -4,7 +4,7 @@ import com.playermanagement.api.ApiCalls;
 import com.playermanagement.api.ApiEndpoints;
 import com.playermanagement.api.UserRole;
 import com.playermanagement.config.TestConstants;
-import com.playermanagement.model.request.PlayerCreateRequest;
+import com.playermanagement.dto.request.PlayerCreateDto;
 import com.playermanagement.utils.PlayerRequestBuilder;
 import com.playermanagement.utils.ValidationDataProvider;
 import io.qameta.allure.Epic;
@@ -26,7 +26,7 @@ public class PlayerCreateValidationTests extends BaseTest {
     @Tag("validation")
     @DisplayName("TC-V-01: Validation test - Empty login")
     void testEmptyLoginValidation() {
-        PlayerCreateRequest request = ValidationDataProvider.getRequestWithEmptyLogin();
+        PlayerCreateDto request = ValidationDataProvider.getRequestWithEmptyLogin();
         verifyValidationError(request);
     }
 
@@ -34,7 +34,7 @@ public class PlayerCreateValidationTests extends BaseTest {
     @Tag("validation")
     @DisplayName("TC-V-02: Validation test - Empty screen name")
     void testEmptyScreenNameValidation() {
-        PlayerCreateRequest request = ValidationDataProvider.getRequestWithEmptyScreenName();
+        PlayerCreateDto request = ValidationDataProvider.getRequestWithEmptyScreenName();
         verifyValidationError(request);
     }
 
@@ -42,7 +42,7 @@ public class PlayerCreateValidationTests extends BaseTest {
     @Tag("validation")
     @DisplayName("TC-V-03: Validation test - Short password")
     void testShortPasswordValidation() {
-        PlayerCreateRequest request = ValidationDataProvider.getRequestWithShortPassword();
+        PlayerCreateDto request = ValidationDataProvider.getRequestWithShortPassword();
         verifyValidationError(request);
     }
 
@@ -50,7 +50,7 @@ public class PlayerCreateValidationTests extends BaseTest {
     @Tag("validation")
     @DisplayName("TC-V-04: Validation test - Age below minimum")
     void testAgeBelowMinimumValidation() {
-        PlayerCreateRequest request = ValidationDataProvider.getRequestWithAgeBelowMinimum();
+        PlayerCreateDto request = ValidationDataProvider.getRequestWithAgeBelowMinimum();
         verifyValidationError(request);
     }
 
@@ -58,7 +58,7 @@ public class PlayerCreateValidationTests extends BaseTest {
     @Tag("validation")
     @DisplayName("TC-V-05: Validation test - Age above maximum")
     void testAgeAboveMaximumValidation() {
-        PlayerCreateRequest request = ValidationDataProvider.getRequestWithAgeAboveMaximum();
+        PlayerCreateDto request = ValidationDataProvider.getRequestWithAgeAboveMaximum();
         verifyValidationError(request);
     }
 
@@ -66,15 +66,7 @@ public class PlayerCreateValidationTests extends BaseTest {
     @Tag("validation")
     @DisplayName("TC-V-06: Validation test - Invalid gender")
     void testInvalidGenderValidation() {
-        PlayerCreateRequest request = ValidationDataProvider.getRequestWithInvalidGender();
-        verifyValidationError(request);
-    }
-
-    @Test
-    @Tag("validation")
-    @DisplayName("TC-V-07: Validation test - Invalid role")
-    void testInvalidRoleValidation() {
-        PlayerCreateRequest request = ValidationDataProvider.getRequestWithInvalidRole();
+        PlayerCreateDto request = ValidationDataProvider.getRequestWithInvalidGender();
         verifyValidationError(request);
     }
 
@@ -82,12 +74,12 @@ public class PlayerCreateValidationTests extends BaseTest {
     @Tag("validation")
     @DisplayName("TC-V-08: Validation test - Valid data")
     void testValidDataValidation() {
-        PlayerCreateRequest request = PlayerRequestBuilder.createUserRequestPojo();
+        PlayerCreateDto request = PlayerRequestBuilder.createUserRequestPojo();
         verifySuccessfulCreation(request);
     }
 
     @Step("Send player creation request")
-    private Response sendPlayerCreationRequest(PlayerCreateRequest request) {
+    private Response sendPlayerCreationRequest(PlayerCreateDto request) {
         log.info("Sending player creation request: {}", request);
         return ApiCalls.post(
             ApiEndpoints.CREATE_PLAYER,
@@ -97,7 +89,7 @@ public class PlayerCreateValidationTests extends BaseTest {
     }
 
     @Step("Verify validation error")
-    private void verifyValidationError(PlayerCreateRequest request) {
+    private void verifyValidationError(PlayerCreateDto request) {
         Response response = sendPlayerCreationRequest(request);
         assertThat(response.getStatusCode()).isEqualTo(TestConstants.HTTP_BAD_REQUEST);
         String errorMessage = response.getBody().asString();
@@ -106,7 +98,7 @@ public class PlayerCreateValidationTests extends BaseTest {
     }
 
     @Step("Verify successful player creation")
-    private void verifySuccessfulCreation(PlayerCreateRequest request) {
+    private void verifySuccessfulCreation(PlayerCreateDto request) {
         Response response = sendPlayerCreationRequest(request);
         assertThat(response.getStatusCode()).isEqualTo(TestConstants.HTTP_CREATED);
         log.info("Successfully created player with valid data");
